@@ -1,0 +1,71 @@
+#template and commands to set up wireguard server
+wireguard server 54.92.185.200
+	- lap 	10.8.0.6
+	- pi	10.8.0.5
+	- phone 10.8.0.4
+		
+ssh keys on server
+	ssh-keygen –b 4096 on server
+	ssh-copy-id pi@wireguardip
+
+#rsync to run as a service on the server to the collection directory
+crontab -e 
+@hourly rsync -a --ignore-existing -e ssh pi@10.8.0.5:~/upload/ ~/1pi_collection
+
+#rsync to run as a cron on the pi every 58min to cp the files over to the /upload directory
+crontab -e 
+*/57 * * * * rsync -a -r --ignore-existing ~/collection/ ~/upload
+*/58 * * * * sudo systemctl restart kismet
+
+#HCXONBOOT
+#HCXEXMODE
+echo -e "alias hcx='sudo ifconfig wlx00c0cab21e1c down && sudo macchanger -r wlx00c0cab21e1c && sudo iwconfig wlx00c0cab21e1c mode monitor && sudo ifconfig wlx00c0cab21e1c up'
+
+#FIXGPS
+#!/bin/bash
+
+#findgps
+dmesg | grep usb | grep "pl2303 converter" > .gpsUSB
+
+#add the ttyUSB# to the $GPS variable
+GPS=$(awk '{print substr($0,60,7)}' .gpsUSB )
+
+#stop gpsd to make config change
+sudo systemctl stop gpsd
+
+#change config to match
+sudo echo "# Start the gpsd daemon automatically at boot time
+START_DAEMON="true"
+# Use USB hotplugging to add new USB devices automatically to the daemon
+USBAUTO="true"
+# Devices gpsd should collect to at boot time.
+# They need to be read/writeable, either by user gpsd or the group dialout.
+DEVICES="/dev/$GPS"
+# Other options you want to pass to gpsd
+GPSD_OPTIONS=""" > /etc/default/gpsd
+
+sudo systemctl start gpsd
+cd ~/src/class
+sudo chmod +x fixgps.sh
+cp fixgps.sh /usr/bin/
+cd ~
+#create the service file
+sudo touch /etc/systemd/system/fixgps.service
+
+#add the required fields to the service file
+sudo echo "[Unit] Description=fixgps
+
+[Service]
+Type=forking
+ExecStart=/usr/bin/fixgps.sh
+
+[Install]
+WantedBy=multi-user.target" > /etc/systemd/system/fixgps.service
+
+#Reload all systemd service files
+sudo systemctl daemon-reload
+
+#start the service
+sudo systemctl start fixgps.service
+
+raspi-config --expand-rootfs
