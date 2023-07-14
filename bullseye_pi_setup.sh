@@ -22,7 +22,7 @@ chown $USER:$USER upload/
 
 #a28git
 cd $userpath/src
-git clone https://github.com/a28-class/class.git
+git clone https://github.com/apt-smz/work.git
 chmod +x *.sh
 cd $userpath
 
