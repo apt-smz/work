@@ -16,7 +16,6 @@ cd $userpath
 mkdir src
 mkdir collection
 mkdir upload
-mkdir /src/class
 chown $USER:$USER src/
 chown $USER:$USER collection/
 chown $USER:$USER upload/
@@ -91,7 +90,7 @@ source .bashrc
 echo "dtoverlay=disable-wifi" >> /boot/config.txt
 
 #FIXGPS
-cd $userpath/src/class
+cd $userpath/src/
 chmod +x fixgps.sh
 cp fixgps.sh /usr/bin/
 cd ~
