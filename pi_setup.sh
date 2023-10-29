@@ -16,6 +16,7 @@ cd $userpath
 mkdir src
 mkdir collection
 mkdir upload
+mkdir /src/class
 chown $USER:$USER src/
 chown $USER:$USER collection/
 chown $USER:$USER upload/
