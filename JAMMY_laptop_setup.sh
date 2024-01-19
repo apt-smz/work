@@ -86,7 +86,7 @@ echo -e "alias wgdown='sudo wg-quick down laptop-wg0'"  >> .bashrc
 source .bashrc
 
 #FIXGPS
-cd $userpath/src/class
+cd $userpath/src/work
 chmod +x fixgps.sh
 cp fixgps.sh /usr/bin/
 cd ~
