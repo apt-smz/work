@@ -90,7 +90,7 @@ source .bashrc
 echo "dtoverlay=disable-wifi" >> /boot/config.txt
 
 #FIXGPS
-cd $userpath/src/
+cd $userpath/src/work/
 chmod +x fixgps.sh
 cp fixgps.sh /usr/bin/
 cd ~
