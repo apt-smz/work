@@ -76,13 +76,10 @@ make install
 cd $userpath
 echo -e "alias gps1='sudo dmesg | grep ttyUSB'" >> .bashrc
 echo -e "alias gps2='sudo nano /etc/default/gpsd'" >> .bashrc
+echo -e "alias gps3='sudo systemctl restart gpsd'" >> .bashrc
 echo -e "alias site='sudo nano /etc/kismet/kismet_site.conf'" >> .bashrc
 echo -e "alias wgup='sudo wg-quick up laptop-wg0'"  >> .bashrc
 echo -e "alias wgdown='sudo wg-quick down laptop-wg0'"  >> .bashrc
-
-#HCXEXMODE
-#echo -e "alias hcx='sudo ifconfig wlx00c0cab21e1c down && sudo macchanger -r wlx00c0cab21e1c && sudo iwconfig wlx00c0cab21e1c mode monitor && sudo ifconfig wlx00c0cab21e1c up'
-
 source .bashrc
 
 #FIXGPS
