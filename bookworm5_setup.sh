@@ -64,13 +64,18 @@ cd src/
 make
 make install
 cd $userpath
+cd $userpath/src/
+git clone https://github.com/kimocoder/bully.git
+cd bully/src
+make
+make install
 
 #netrecon
 apt install traceroute nmap
 
 #wpa3
 cd $userpath/src
-sudo git clone https://github.com/oblique/create_ap.git
+git clone https://github.com/oblique/create_ap.git
 cd create_ap
 make install
 
