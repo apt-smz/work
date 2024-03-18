@@ -10,6 +10,7 @@ userpath=$(pwd)
 
 #Requirements
 apt install jq wireguard resolvconf gcc git net-tools gpsd gpsd-clients rsync macchanger haveged hostapd util-linux procps iproute2 iw dnsmasq iptables
+pip install scapy
 
 #file_system
 cd $userpath
