@@ -34,7 +34,7 @@ install_packages() {
     echo "Updating and installing packages..."
     apt update && apt upgrade -y
     apt-get install -yq git
-    apt-get install -yq jq wireguard resolvconf gcc net-tools gpsd gpsd-clients rsync haveged hostapd util-linux procps iproute2 iw dnsmasq iptables aircrack-ng libcurl4-openssl-dev libssl-dev pkg-config build-essential libpcap-dev pixiewps traceroute nmap macchanger wifite
+    apt-get install -yq jq wireguard resolvconf pip gcc net-tools gpsd gpsd-clients rsync haveged hostapd util-linux procps iproute2 iw dnsmasq iptables aircrack-ng libcurl4-openssl-dev libssl-dev pkg-config build-essential libpcap-dev pixiewps traceroute nmap macchanger wifite
     pip install scapy minicom
 }
 
