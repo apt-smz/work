@@ -1,12 +1,7 @@
 #!/bin/bash
 
-for interface in $(ls /sys/class/net); do
-    if [[ "$(readlink /sys/class/net/$interface)" == *"/usb"* ]]; then
-        ip link set $interface down
-        macchanger -r $interface
-        ip link set $interface up
-    fi
-done
-
-#start Kismet
-sudo systemctl start kismet.service
+# Check if there are any interfaces with 'kismon' in their name
+if ! /sbin/ip link show | grep -q 'kismon'; then
+    # No kismon interfaces found, restart Kismet
+    systemctl restart kismet
+fi
