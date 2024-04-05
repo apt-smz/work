@@ -52,12 +52,10 @@ setup_file_system() {
 clone_repositories() {
     echo "Cloning repositories..."
     git clone "$REPO_WORK" "$USER_PATH/src/work"
-    chmod +x "$USER_PATH/src/work/deauth.py"
-    cp "$USER_PATH/src/work/deauth.py" $USER_PATH
     git clone "$REPO_SIXFAB" "$USER_PATH/src/Sixfab_PPP_Installer"
     git clone "$REPO_HCXDUMPTOOL" "$USER_PATH/src/hcxdumptool"
     git clone "$REPO_BULLY" "$USER_PATH/src/bully"
-    git clone "$REPO_CREATE_AP" "$USER_PATH/src/create_ap"
+    git clone "$REPO_MANA" "$USER_PATH/src/hostapd-mana"
 }
 
 # Function to set up Kismet
@@ -89,11 +87,11 @@ setup_bully() {
     make install
 }
 
-# Function to install and set up create_ap
-setup_create_ap() {
+# Function to install and set up hostapd_mana
+setup_hostapd_mana() {
     echo "Setting up create_ap..."
-    cd "$USER_PATH/src/create_ap"
-    make install
+    cd "$USER_PATH/src/hostapd-mana"
+    make -C hostapd
 }
 
 # Function to set up aliases
@@ -181,7 +179,7 @@ main() {
     setup_kismet
     setup_hcxdumptool
     setup_bully
-    setup_create_ap
+    setup_hostapd_mana
     setup_aliases
     disable_onboard_wifi
     setup_services
