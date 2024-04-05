@@ -28,7 +28,6 @@ REPO_SIXFAB="https://github.com/sixfab/Sixfab_PPP_Installer.git"
 REPO_HCXDUMPTOOL="https://github.com/ZerBea/hcxdumptool.git"
 REPO_MANA="https://github.com/sensepost/hostapd-mana.git
 REPO_BULLY="https://github.com/kimocoder/bully.git"
-REPO_CREATE_AP="https://github.com/oblique/create_ap.git"
 KISMET_CONFIG="/etc/kismet/kismet_site.conf"
 
 # Function to install required packages
@@ -115,7 +114,7 @@ disable_onboard_wifi() {
 setup_services() {
     echo "Setting up services..."
     cd "$USER_PATH/src/work/"
-    chmod +x fixgps.sh kismet_mac.sh
+    chmod +x fixgps.sh kismet_mac.sh deauth.py eviltwin.sh associate.sh
     cp fixgps.sh /usr/bin/
     cp kismet_mac.sh /usr/bin/
 
