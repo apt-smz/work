@@ -21,10 +21,12 @@ if [ "$(id -u)" != "0" ]; then
 fi
 
 # Configurable Variables
+REAL_USER=$(logname 2>/dev/null || echo $SUDO_USER)
 USER_PATH=$(pwd)
 REPO_WORK="https://github.com/apt-smz/work.git"
 REPO_SIXFAB="https://github.com/sixfab/Sixfab_PPP_Installer.git"
 REPO_HCXDUMPTOOL="https://github.com/ZerBea/hcxdumptool.git"
+REPO_MANA="https://github.com/sensepost/hostapd-mana.git
 REPO_BULLY="https://github.com/kimocoder/bully.git"
 REPO_CREATE_AP="https://github.com/oblique/create_ap.git"
 KISMET_CONFIG="/etc/kismet/kismet_site.conf"
@@ -34,8 +36,8 @@ install_packages() {
     echo "Updating and installing packages..."
     apt update && apt upgrade -y
     apt-get install -yq git
-    apt-get install -yq jq wireguard scapy resolvconf pip gcc net-tools gpsd gpsd-clients rsync haveged hostapd util-linux procps iproute2 iw dnsmasq iptables aircrack-ng libcurl4-openssl-dev libssl-dev pkg-config build-essential libpcap-dev pixiewps traceroute nmap macchanger wifite
-    
+    apt-get install -yq jq wireguard scapy resolvconf libnl-genl-3-dev pip gcc net-tools gpsd gpsd-clients rsync haveged hostapd util-linux procps iproute2 iw dnsmasq iptables aircrack-ng libcurl4-openssl-dev libssl-dev pkg-config build-essential libpcap-dev pixiewps traceroute nmap macchanger wifite
+     
 }
 
 # Function to set up file system
@@ -43,7 +45,7 @@ setup_file_system() {
     echo "Setting up file system..."
     cd "$USER_PATH"
     mkdir -p src collection upload
-    chown $USER src/ collection/ upload/
+    sudo chown -R $REAL_USER src/ collection/ upload/
 }
 
 # Function to clone repositories
