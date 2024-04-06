@@ -80,7 +80,7 @@ setup_hcxdumptool() {
 
 # Function to install and set up Bully
 setup_bully() {
-    echo "Setting up Bully..."
+    echo "Setting up bully..."
     cd "$USER_PATH/src/bully/src"
     make
     make install
@@ -88,7 +88,7 @@ setup_bully() {
 
 # Function to install and set up hostapd_mana
 setup_hostapd_mana() {
-    echo "Setting up create_ap..."
+    echo "Setting up hostapd-mana..."
     cd "$USER_PATH/src/hostapd-mana"
     make -C hostapd
 }
