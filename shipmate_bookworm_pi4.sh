@@ -26,7 +26,7 @@ USER_PATH=$(pwd)
 REPO_WORK="https://github.com/apt-smz/work.git"
 REPO_SIXFAB="https://github.com/sixfab/Sixfab_PPP_Installer.git"
 REPO_HCXDUMPTOOL="https://github.com/ZerBea/hcxdumptool.git"
-REPO_MANA="https://github.com/sensepost/hostapd-mana.git
+REPO_MANA="https://github.com/sensepost/hostapd-mana.git"
 REPO_BULLY="https://github.com/kimocoder/bully.git"
 KISMET_CONFIG="/etc/kismet/kismet_site.conf"
 
