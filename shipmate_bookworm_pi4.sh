@@ -144,10 +144,13 @@ setup_services() {
 
     {
         echo "[Unit]"
-        echo "Description=Disable USB Wi-Fi interfaces and randomize MAC addresses and start kismet"
+        echo "Description=Check and restart Kismet if kismon interface is not created"
+        echo "After=kismet.service"
+        echo "Wants=kismet.service"
         echo ""
         echo "[Service]"
         echo "Type=oneshot"
+        # echo "ExecStartPre=/bin/sleep 1"
         echo "ExecStart=/usr/bin/kismet_mac.sh"
         echo ""
         echo "[Install]"
