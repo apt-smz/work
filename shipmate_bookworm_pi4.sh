@@ -150,7 +150,7 @@ setup_services() {
         echo ""
         echo "[Service]"
         echo "Type=oneshot"
-        # echo "ExecStartPre=/bin/sleep 1"
+        echo "ExecStartPre=/bin/sleep 1"
         echo "ExecStart=/usr/bin/kismet_mac.sh"
         echo ""
         echo "[Install]"
