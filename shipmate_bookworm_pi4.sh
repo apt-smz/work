@@ -44,7 +44,7 @@ setup_file_system() {
     echo "Setting up file system..."
     cd "$USER_PATH"
     mkdir -p src collection upload
-    sudo chown -R $REAL_USER src/ collection/ upload/
+    sudo chown -R $REAL_USER:$REAL_USER src/ collection/ upload/
 }
 
 # Function to clone repositories
