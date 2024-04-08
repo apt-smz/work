@@ -1,0 +1,11 @@
+#fixgps.timer
+#/etc/systemd/system/fixgps.timer
+[Unit]
+Description=Runs the fixgps.service 10 seconds after boot up
+
+[Timer]
+OnBootSec=10
+Unit=fixgps.service
+
+[Install]
+WantedBy=basic.target
