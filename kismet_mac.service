@@ -1,0 +1,25 @@
+#kismet_mac.service
+#/etc/systemd/system/kismet_mac.service
+
+[Unit]
+Description=Runs the fixgps.service 10 seconds after boot up
+
+[Timer]
+OnBootSec=10
+Unit=fixgps.service
+
+[Install]
+WantedBy=basic.target
+pi@test:~ $ cat /etc/systemd/system/kismet_mac.service
+[Unit]
+Description=Check and restart Kismet if kismon interface is not created
+After=kismet.service
+Wants=kismet.service
+
+[Service]
+Type=oneshot
+ExecStartPre=/bin/sleep 1
+ExecStart=/usr/bin/kismet_mac.sh
+
+[Install]
+WantedBy=multi-user.target
