@@ -1,0 +1,11 @@
+#fixgps.service
+#/etc/systemd/system/fixgps.service
+[Unit]
+Description=fixgps
+
+[Service]
+Type=forking
+ExecStart=/usr/bin/fixgps.sh
+
+[Install]
+WantedBy=multi-user.target
