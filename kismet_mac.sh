@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# Function to check if kismon interface exists
+# Function to check if any kismon interface exists
 check_kismon() {
-    if ! /sbin/ip link show kismon &> /dev/null; then
+    if ! /sbin/ip link show | grep -q '^kismon'; then
         systemctl restart kismet.service
         logger "kismet_mac.sh: Restarted Kismet service because kismon interface was not found."
     fi
