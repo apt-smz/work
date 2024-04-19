@@ -50,17 +50,16 @@ echo "Establishing Connection to Target Network:"
 echo ""
 
 # Connect to the target SSID with the provided password
-# Connect to the target SSID with the provided password
 if sudo nmcli device wifi connect "$target_ssid" password "$user_input_password" ifname $interface_wlx; then
     GATEWAY_IP=$(ip route show dev $interface_wlx | grep 'default via' | awk '{print $3}')
     sudo ip route replace default via $GATEWAY_IP dev $interface_wlx metric 600
     IP_ADDRESS=$(ip addr show $interface_wlx | grep 'inet ' | awk '{print $2}')
-    printf "\n\e[1mSuccess:\e[0m Connected to %s\n\n" "$target_ssid"
-    printf "\e[1mIP Address for %s:\e[0m %s\n\n" "$interface_wlx" "$IP_ADDRESS"
-    printf "\e[1mGateway IP:\e[0m %s\n\n" "$GATEWAY_IP"
+        printf "\nSuccess: Connected to %s\n\n" "$target_ssid"
+        printf "IP Address for %s: %s\n\n" "$interface_wlx" "$IP_ADDRESS"
+        printf "Gateway IP: %s\n\n" "$GATEWAY_IP"
 
     # Print IP route info for all interfaces
-    echo -e "\e[1mIP Route Info:\e[0m"
+    echo "IP Route Info:"
     ip route
 
     # Log connection information
