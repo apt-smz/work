@@ -30,7 +30,7 @@ sudo ifconfig $interface_selected down
 # Pause
 echo "Bringing down kismet controlled interface."
 echo ""
-sleep 5
+sleep 7
 
 # Change the MAC for association
 echo "Setting MAC in preparation of Network Association:"
@@ -58,7 +58,7 @@ sleep 5
 echo ""
 echo "Taking control of established interface."
 echo ""
-sudo nmcli device set $interface_wlx managed true
+nmcli device set $interface_wlx managed true
 
 # Pause
 sleep 5
@@ -66,7 +66,7 @@ echo "Establishing Connection to Target Network:"
 echo ""
 
 # Connect to the target SSID with the provided password
-if sudo nmcli device wifi connect "$target_ssid" password "$user_input_password" ifname $interface_wlx; then
+if nmcli device wifi connect "$target_ssid" password "$user_input_password" ifname $interface_wlx; then
     GATEWAY_IP=$(ip route show dev $interface_wlx | grep 'default via' | awk '{print $3}')
     sudo ip route replace default via $GATEWAY_IP dev $interface_wlx metric 600
     IP_ADDRESS=$(ip addr show $interface_wlx | grep 'inet ' | awk '{print $2}')
