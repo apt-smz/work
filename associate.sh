@@ -43,7 +43,6 @@ sleep 5
 # Save the current hostname before changing it
 current_hostname=$(hostname)
 echo "Current hostname is $current_hostname, changing to $user_input_hostname"
-echo ""
 
 # Log the current hostname to a file
 echo "$current_hostname" > /home/$REAL_USER/src/work/hostname_history.txt
