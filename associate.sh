@@ -46,8 +46,7 @@ echo "Current hostname is $current_hostname, changing to $user_input_hostname"
 echo ""
 
 # Log the current hostname to a file
-echo "Previous hostname: $current_hostname" > /home/$REAL_USER/src/work/hostname_history.txt
-echo ""
+echo "$current_hostname" > /home/$REAL_USER/src/work/hostname_history.txt
 
 # Change the Hostname
 sudo hostnamectl set-hostname $user_input_hostname
@@ -68,7 +67,7 @@ echo ""
 # Connect to the target SSID with the provided password
 if nmcli device wifi connect "$target_ssid" password "$user_input_password" ifname $interface_wlx; then
     GATEWAY_IP=$(ip route show dev $interface_wlx | grep 'default via' | awk '{print $3}')
-    sudo ip route replace default via $GATEWAY_IP dev $interface_wlx metric 600
+    ip route replace default via $GATEWAY_IP dev $interface_wlx metric 600
     IP_ADDRESS=$(ip addr show $interface_wlx | grep 'inet ' | awk '{print $2}')
     printf "\nSuccess: Connected to %s\n\n" "$target_ssid"
     printf "IP Address for %s: %s\n\n" "$interface_wlx" "$IP_ADDRESS"
