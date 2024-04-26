@@ -107,7 +107,7 @@ setup_aliases() {
 # Function to disable onboard WiFi
 disable_onboard_wifi() {
     echo "Disabling onboard WiFi..."
-    echo "dtoverlay=disable-wifi" >> /boot/config.txt
+    echo "dtoverlay=disable-wifi" >> /boot/firmware/config.txt
 }
 
 # Function to set up services
@@ -117,6 +117,9 @@ setup_services() {
     chmod +x fixgps.sh kismet_mac.sh deauth.py eviltwin.sh associate.sh pcap_dl.sh
     cp fixgps.sh /usr/bin/
     cp kismet_mac.sh /usr/bin/
+    mkdir handshakes/ logs/
+    sudo chown -R $REAL_USER:$REAL_USER handshakes/ logs/
+    
 
     {
         echo "[Unit]"
