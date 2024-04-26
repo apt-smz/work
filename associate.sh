@@ -45,7 +45,7 @@ current_hostname=$(hostname)
 echo "Current hostname is $current_hostname, changing to $user_input_hostname"
 
 # Log the current hostname to a file
-echo "$current_hostname" > /home/$REAL_USER/src/work/hostname_history.txt
+echo "$current_hostname" > /home/$REAL_USER/src/work/logs/hostname_history.txt
 
 # Change the Hostname
 sudo hostnamectl set-hostname $user_input_hostname
@@ -83,7 +83,7 @@ if nmcli device wifi connect "$target_ssid" password "$user_input_password" ifna
         echo "Gateway IP: $GATEWAY_IP"
         echo "IP Route Info:"
         ip route
-    } > /home/$REAL_USER/src/work/$target_ssid_connection_log.txt
+    } > /home/$REAL_USER/src/work/logs/$target_ssid_connection_log.txt
 else
     printf "\n\e[1mError:\e[0m Failed to connect to %s\n\n" "$target_ssid"
 fi
