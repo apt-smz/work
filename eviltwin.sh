@@ -50,13 +50,13 @@ sleep 5
 
 # Function to extract unique MAC addresses and save to a file
 extract_and_save_macs() {
-    grep -v 'Using interface' /home/$real_user/src/work/$AP_ssid-mana.log | grep -oE '([[:xdigit:]]{2}:){5}[[:xdigit:]]{2}' | sort | uniq > /home/pi/src/work/$AP_ssid-mana-un>}
+    grep -v 'Using interface' /home/$real_user/src/work/logs/$AP_ssid-mana.log | grep -oE '([[:xdigit:]]{2}:){5}[[:xdigit:]]{2}' | sort | uniq > /home/$real_user/src/work/logs/$AP_ssid-mana-un>}
 
 # Trap SIGINT (Ctrl+C) and SIGTERM to run the extract_and_save_macs function before exiting
 trap 'extract_and_save_macs; sudo kill $!; exit' SIGINT SIGTERM
 
 # Run the attack for the specified duration
-sudo /home/$real_user/src/hostapd-mana/hostapd/hostapd -i $interface_wlx $config_file 2>&1 | sudo tee -a /home/$real_user/src/work/$AP_ssid-mana.log &
+sudo /home/$real_user/src/hostapd-mana/hostapd/hostapd -i $interface_wlx $config_file 2>&1 | sudo tee -a /home/$real_user/src/work/logs/$AP_ssid-mana.log &
 sleep $duration
 
 # If the script reaches this point, extract MAC addresses and kill the hostapd-mana process
