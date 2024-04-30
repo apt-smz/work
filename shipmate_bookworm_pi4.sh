@@ -114,7 +114,7 @@ disable_onboard_wifi() {
 setup_services() {
     echo "Setting up services..."
     cd "$USER_PATH/src/work/"
-    chmod +x fixgps.sh kismet_mac.sh deauth.py eviltwin.sh associate.sh pcap_dl.sh
+    chmod +x fixgps.sh kismet_mac.sh deauth.py eviltwin.sh associate.sh pcap_dl.sh full_scan.sh
     cp fixgps.sh /usr/bin/
     cp kismet_mac.sh /usr/bin/
     mkdir handshakes/ logs/
