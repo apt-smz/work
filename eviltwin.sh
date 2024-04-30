@@ -33,24 +33,25 @@ echo "wpa_pairwise=TKIP CCMP" >> $config_file
 echo "wpa_passphrase=$wpa_passphrase" >> $config_file
 echo "auth_algs=3" >> $config_file
 
-#testlogging
+# Test logging
 echo "logger_syslog=-1" >> $config_file
 echo "logger_syslog_level=2" >> $config_file
 echo "logger_stdout=-1" >> $config_file
 echo "logger_stdout_level=2" >> $config_file
 
-#pause
+# Pause
 sleep 5
 
 # Get the interface up and ready
 sudo ifconfig $interface_wlx up
 
-#pause
+# Pause
 sleep 5
 
 # Function to extract unique MAC addresses and save to a file
 extract_and_save_macs() {
-    grep -v 'Using interface' /home/$real_user/src/work/logs/$AP_ssid-mana.log | grep -oE '([[:xdigit:]]{2}:){5}[[:xdigit:]]{2}' | sort | uniq > /home/$real_user/src/work/logs/$AP_ssid-mana-un>}
+    grep -v 'Using interface' /home/$real_user/src/work/logs/$AP_ssid-mana.log | grep -oE '([[:xdigit:]]{2}:){5}[[:xdigit:]]{2}' | sort | uniq > /home/$real_user/src/work/logs/$AP_ssid-mana-unique.log
+}
 
 # Trap SIGINT (Ctrl+C) and SIGTERM to run the extract_and_save_macs function before exiting
 trap 'extract_and_save_macs; sudo kill $!; exit' SIGINT SIGTERM
@@ -62,3 +63,4 @@ sleep $duration
 # If the script reaches this point, extract MAC addresses and kill the hostapd-mana process
 extract_and_save_macs
 sudo kill $!
+
