@@ -30,11 +30,11 @@ sudo ifconfig $interface_selected down
 # Pause
 echo "Bringing down kismet controlled interface."
 echo ""
-sleep 7
+sleep 9
 
 # Change the MAC for association
 echo "Setting MAC in preparation of Network Association:"
-sudo macchanger -m $user_input_mac $interface_wlx
+macchanger -m $user_input_mac $interface_wlx
 echo ""
 
 # Pause
