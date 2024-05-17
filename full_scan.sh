@@ -34,7 +34,7 @@ sort -u list -o list
 echo "===================="
 cat list
 rm scan
-echo -e "\nPort scan started..."
+echo -e "Port scan started..."
 
 # Run nmap command and redirect output to scanned file in the directory
 sudo nmap -sS -Pn -iL list >> scanned 2>/dev/null &
@@ -45,11 +45,12 @@ while kill -0 $NMAP_PID >/dev/null 2>&1; do
     echo -n " "
     sleep 1
 done
-echo "\nScan completed."
+echo ""
+echo "Scan completed."
 echo "Results from scan"
 
 cat scanned
-echo " "
+echo ""
 
 # Add default gateway to the list
 default_gateway=$(ip route | grep "wlx" | awk '/default/ { print $3 " " $4 " " $5 }')
