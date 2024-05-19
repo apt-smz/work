@@ -59,7 +59,7 @@ perform_nmap_scan() {
             ;;
         4)
             echo "Performing Comprehensive Nmap Scan..."
-            sudo nmap -T5 -A -p- -Pn -iL list >> scanned_$timestamp
+            sudo nmap -T4 -A -p- -Pn -iL list >> scanned_$timestamp
             ;;
         *)
             echo "Invalid option. Exiting."
