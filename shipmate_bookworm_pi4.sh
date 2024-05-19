@@ -68,6 +68,7 @@ setup_kismet() {
     apt-get install -yq kismet
     mv "$USER_PATH/src/work/kismet_site.conf" "$KISMET_CONFIG"
     unset DEBIAN_FRONTEND
+    systemctl enable kismet.service
 }
 
 # Function to install and set up hcxdumptool
