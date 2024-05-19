@@ -1,77 +1,145 @@
 #!/bin/bash
-echo -e "\n\n\nStarting Basic Network Recon\n\n"
-
-# Define the REAL_USER and directory path
-REAL_USER=$(logname 2>/dev/null || echo $SUDO_USER)
-base_directory="/home/$REAL_USER/src/work"
 
 # Function to get connected WiFi network SSID
 get_wifi_ssid() {
     iwconfig 2>/dev/null | grep -o 'ESSID:"[^"]*' | sed 's/ESSID:"//'
 }
 
-# Create directory based on WiFi SSID
+# Function to get the IP address of the wireless interface
+get_ip_address() {
+    ip a | grep 'wlx' | grep -oP 'inet \K[\d.]+/\d+' | head -n 1
+}
+
+# Function to create a directory based on the WiFi SSID
+create_directory() {
+    local base_directory="/home/$REAL_USER/src/work"
+    local wifi_ssid=$(get_wifi_ssid)
+    if [ -n "$wifi_ssid" ]; then
+        local directory_name=$(echo "$wifi_ssid" | tr -d '[:space:]')
+        mkdir -p "$base_directory/$directory_name" 2>/dev/null
+        echo "$base_directory/$directory_name"
+    fi
+}
+
+# Function to get host IP information for the wireless interface only
+get_host_ip_info() {
+    local wifi_interface=$(ip route | grep -o 'wlx[^ ]*' | awk '{print $1}' | sort -u)
+    nmcli dev show "$wifi_interface" | grep -E 'GENERAL.DEVICE|IP4.ADDRESS|IP4.GATEWAY|IP4.DNS'
+}
+
+# Function to discover hosts on the network
+discover_hosts() {
+    local ip_address=$1
+    sudo nmap -sn "$ip_address" | grep -oP '\d+\.\d+\.\d+\.\d+' >> scan 2>/dev/null
+    sleep 5
+    arp -a | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b" >> scan 2>/dev/null
+    local ip_base=$(echo "$ip_address" | grep -oP '\d+\.\d+\.\d+\.')
+    grep "^$ip_base" scan | sort -u > list 2>/dev/null
+    sort -u list -o list
+    sed -i "/$(echo $ip_address | cut -d'/' -f1)/d" list
+    cat list
+    rm scan
+}
+
+# Function to perform Nmap scan based on user's choice
+perform_nmap_scan() {
+    local scan_choice="$1"
+    case $scan_choice in
+        1)
+            echo "Performing Quick Nmap Scan..."
+            sudo nmap -T4 -sS -F -Pn -iL list >> scanned_$timestamp
+            ;;
+        2)
+            echo "Performing Standard Nmap Scan..."
+            sudo nmap -T4 -sS -sV -Pn -iL list >> scanned_$timestamp
+            ;;
+        3)
+            echo "Performing Intense Nmap Scan..."
+            sudo nmap -T4 -A -Pn -iL list >> scanned_$timestamp
+            ;;
+        4)
+            echo "Performing Comprehensive Nmap Scan..."
+            sudo nmap -T5 -A -p- -Pn -iL list >> scanned_$timestamp
+            ;;
+        *)
+            echo "Invalid option. Exiting."
+            exit 1
+            ;;
+    esac
+}
+
+# Function to get the default gateway
+get_default_gateway() {
+    ip route | grep "wlx" | awk '/default/ { print $3 " " $4 " " $5 }'
+}
+
+# Function to get public IP address
+get_public_ip() {
+    curl -s --interface $(ip a | grep 'inet ' | grep 'wlx' | grep -oP 'wlx[a-fA-F0-9:]{12}') http://ifconfig.me
+}
+
+# Function to perform traceroute
+perform_traceroute() {
+    traceroute -i $(ip route | grep "wlx" | grep default | awk '{print $5}') 8.8.8.8 2>/dev/null
+}
+
+# Main script starts here
+echo -e "\n\n\nStarting Basic Network Recon for $(get_wifi_ssid)"
+echo -e "=============================\n\n"
+
+# Assign command-line argument to variable
+scan_choice="$1"
+
+# Define the REAL_USER and directory path
+REAL_USER=$(logname 2>/dev/null || echo $SUDO_USER)
+directory=$(create_directory)
 wifi_ssid=$(get_wifi_ssid)
-if [ -n "$wifi_ssid" ]; then
-    directory_name=$(echo "$wifi_ssid" | tr -d '[:space:]') # Remove spaces from SSID
-    mkdir -p "$base_directory/$directory_name" 2>/dev/null # Suppress error
-    echo "Files are located in: $base_directory/$directory_name"
-    cd "$base_directory/$directory_name" || exit 1
-fi
+echo "Files are located in: $directory"
+cd "$directory" || exit 1
 
-echo -e "\nTarget network SSID: $directory_name"
-your_ip_address=$(ip a | grep 'wlx' | grep -oP 'inet \K[\d.]+/\d+' | head -n 1)
-echo "Hosts    (Your IP is: $your_ip_address)"
+# Get the timestamp for file names
+timestamp=$(date +'%d-%b-%Y')
 
-# Extract hosts using nmap and redirect output to files in the directory
-sudo nmap -sn $(ip a | grep 'wlx' | grep -oP 'inet \K[\d.]+/\d+' | head -n 1) | grep -oP '\d+\.\d+\.\d+\.\d+' >> scan 2>/dev/null
-sleep 5
-arp -a | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b" >> scan 2>/dev/null
-ip_address=$(ip a | grep 'wlx' | grep -oP 'inet \K[\d.]+/\d+' | head -n 1 | grep -oP '\d+\.\d+\.\d+\.' | sed 's/\./\\\./g')
-grep "^$ip_address" scan | sort -u > list 2>/dev/null
-sort -u list -o list
+# Get your IP address
+your_ip_address=$(get_ip_address)
+host_ip_info=$(get_host_ip_info)
 
+echo "Hosts info     (Your IP is: $your_ip_address)"
+echo -e "============================\n"
+echo "$host_ip_info" | tee "host_info_$timestamp"
+
+# Discover hosts
+echo -e "Discovered hosts"
 echo "===================="
-cat list
-rm scan
-echo -e "Port scan started..."
+discover_hosts "$your_ip_address"
 
-# Run nmap command and redirect output to scanned file in the directory
-sudo nmap -sS -Pn -iL list >> scanned 2>/dev/null &
-NMAP_PID=$!
+# Perform Nmap scan
+echo -e "\n\n"
+perform_nmap_scan "$scan_choice"
 
-# Wait for nmap to finish
-while kill -0 $NMAP_PID >/dev/null 2>&1; do
-    echo -n " "
-    sleep 1
-done
-echo ""
-echo "Scan completed."
+echo -e "\nScan completed."
 echo "Results from scan"
-
-cat scanned
-echo ""
-
-# Add default gateway to the list
-default_gateway=$(ip route | grep "wlx" | awk '/default/ { print $3 " " $4 " " $5 }')
-echo "Default Gateway: $default_gateway" | tee "$base_directory/$directory_name/default_gateway"
+cat "scanned_$timestamp"
 echo " "
 
-# Get public IP using curl
-public_ip=$(curl -s --interface $(ip a | grep 'inet ' | grep 'wlx' | grep -oP 'wlx[a-fA-F0-9:]{12}') http://ifconfig.me 2>/dev/null)
+# Get and display default gateway (commented out)
+#default_gateway=$(get_default_gateway)
+#echo "Default Gateway: $default_gateway" | tee "$base_directory/$directory_name/default_gateway"
+#echo " "
 
-# Check if public_ip is empty
+# Get public IP and display
+public_ip=$(get_public_ip)
 if [ -z "$public_ip" ]; then
     echo "Could not determine a public IP. This could be an airgapped network"
 else
-    # Display the result
-    echo "Your public IP address is: $public_ip" | tee "$base_directory/$directory_name/public_ip"
+    echo "Your public IP address is: $public_ip" | tee "public_ip_$timestamp"
 fi
 echo " "
 
-# Perform traceroute and display results with wlx interface
-traceroute -i $(ip route | grep "wlx" | grep default | awk '{print $5}') 8.8.8.8 2>/dev/null | tee "$base_directory/$directory_name/traceroute_google"
+# Perform traceroute and display results
+perform_traceroute | tee "traceroute_google_$timestamp"
 
+# Completion message
 echo " "
-echo " "
-echo "FINISHED"
+echo "SCAN OF $wifi_ssid COMPLETE"
+echo "Log files are located in: $directory"
