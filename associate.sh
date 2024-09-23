@@ -65,8 +65,16 @@ echo ""
 
 # Connect to the target SSID with the provided password
 if nmcli device wifi connect "$target_ssid" password "$user_input_password" ifname $interface_wlx; then
+    # Get the current gateway IP for the wlx interface
     GATEWAY_IP=$(ip route show dev $interface_wlx | grep 'default via' | awk '{print $3}')
-    ip route replace default via $GATEWAY_IP dev $interface_wlx metric 600
+
+    # Remove any existing default route for the wlx interface
+    sudo ip route del default dev $interface_wlx
+
+    # Set the default route for wlx with a high metric (e.g., 2000) to make it lower priority
+    sudo ip route add default via $GATEWAY_IP dev $interface_wlx metric 2000
+
+    # Get and display the assigned IP address
     IP_ADDRESS=$(ip addr show $interface_wlx | grep 'inet ' | awk '{print $2}')
     printf "\nSuccess: Connected to %s\n\n" "$target_ssid"
     printf "IP Address for %s: %s\n\n" "$interface_wlx" "$IP_ADDRESS"
